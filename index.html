@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tamil OCR</title>
+<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<script src="lib/jquery.js"></script>
+<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+
+<script>
+	$(document).ready(function() {
+
+		$("#submit").click(function(e) {
+			e.preventDefault();
+			var pdfUrl = $("#pdfUrl").val();
+			var numOfColumns = $("#numOfColumns").val();
+			processSubmission(pdfUrl, numOfColumns);
+		});
+
+	});
+
+	function processSubmission(pdfUrl, numOfColumns) {
+		var request = $.ajax({
+			url : "php/ocr.php",
+			method : "POST",
+			data : {
+				pdfUrl : pdfUrl,
+				numOfColumns : numOfColumns
+			},
+			dataType : "text"
+		});
+
+		request.done(function(msg) {
+			$("#result").html("<a href='http://104.236.205.49/ocr/php/text-for-" + msg +"/" + "all_text_for_" + msg + ".txt'>" + msg + ".txt</a>");
+
+		});
+
+		request.fail(function(jqXHR, textStatus) {
+			alert("Request failed: " + textStatus);
+		});
+	}
+</script>
+
+</head>
+<body>
+
+	<div class="container">
+		<div class="jumbotron">
+			<h1>Tamil OCR Generator</h1>
+			<p>https://github.com/tshrinivasan/OCR4wikisource</p>
+		</div>
+		<div class="row">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-8">
+				<form class="form-horizontal" role="form">
+
+					<div class="form-group">
+						<label for="pdfUrl">PDF URL</label> <input type="text"
+							class="form-control" id="pdfUrl" placeholder="Enter the full url of the pdf you want to convert">
+					</div>
+
+					<div class="form-group">
+						<label for="file_type">Number of Columns</label> 
+						<select class="form-control" id="numOfColumns">
+							<option value="1">One</option>
+							<option value="2">Two</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<button type="submit" id="submit" class="btn btn-primary btn-lg">Generate Tamil OCR Text</button>
+					</div>
+
+				</form>
+				
+				<div id="result" class="bg-success"></div>
+				
+			</div>
+
+			<div class="col-sm-2"></div>
+		</div>
+	</div>
+
+</body>
+</html>
